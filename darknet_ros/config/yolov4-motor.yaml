@@ -1,0 +1,11 @@
+yolo_model:
+
+  config_file:
+    name: motor_v4_c1_fullhd.cfg
+  weight_file:
+    name: motor_v4_c1_fullhd_best.weights
+  threshold:
+    value: 0.05
+  detection_classes:
+    names:
+      - motor
