@@ -130,6 +130,8 @@ class YoloObjectDetector {
    */
   bool publishDetectionImage(const cv::Mat& detectionImage);
 
+  bool publishResultImage();
+
   //! Using.
   using CheckForObjectsActionServer = actionlib::SimpleActionServer<darknet_ros_msgs::CheckForObjectsAction>;
   using CheckForObjectsActionServerPtr = std::shared_ptr<CheckForObjectsActionServer>;

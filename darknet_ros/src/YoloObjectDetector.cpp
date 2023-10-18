@@ -47,7 +47,7 @@ YoloObjectDetector::~YoloObjectDetector() {
 
 bool YoloObjectDetector::readParameters() {
   // Load common parameters.
-  nodeHandle_.param("image_view/enable_opencv", viewImage_, true);
+  nodeHandle_.param("image_view/enable_opencv", viewImage_, false);
   nodeHandle_.param("image_view/wait_key_delay", waitKeyDelay_, 3);
   nodeHandle_.param("image_view/enable_console_output", enableConsoleOutput_, false);
 
@@ -236,6 +236,17 @@ bool YoloObjectDetector::publishDetectionImage(const cv::Mat& detectionImage) {
   cvImage.image = detectionImage;
   detectionImagePublisher_.publish(*cvImage.toImageMsg());
   ROS_DEBUG("Detection image has been published.");
+  return true;
+}
+
+bool YoloObjectDetector::publishResultImage() {
+  if (detectionImagePublisher_.getNumSubscribers() < 1) return false;
+  cv_bridge::CvImage cvImage;
+  cvImage.header = headerBuff_[(buffIndex_ + 1) % 3];
+  cvImage.encoding = sensor_msgs::image_encodings::BGR8;
+  cvImage.image = image_to_mat(buff_[(buffIndex_ + 1) % 3]);
+  detectionImagePublisher_.publish(*cvImage.toImageMsg());
+  ROS_DEBUG("Result image has been published.");
   return true;
 }
 
@@ -526,10 +537,13 @@ bool YoloObjectDetector::isNodeRunning(void) {
 }
 
 void* YoloObjectDetector::publishInThread() {
-  // Publish image.
-  cv::Mat cvImage = disp_;
-  if (!publishDetectionImage(cv::Mat(cvImage))) {
-    ROS_DEBUG("Detection image has not been broadcasted.");
+  //Publish image.
+  // cv::Mat cvImage = disp_;
+  // if (!publishDetectionImage(cv::Mat(cvImage))) {
+  //   ROS_DEBUG("Detection image has not been broadcasted.");
+  // }
+  if (!publishResultImage()) {
+    ROS_DEBUG("Result image has not been broadcasted.");
   }
 
   // Publish bounding boxes and detection result.
