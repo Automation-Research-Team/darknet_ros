@@ -139,6 +139,13 @@ void YoloObjectDetector::init() {
   nodeHandle_.param("publishers/detection_image/queue_size", detectionImageQueueSize, 1);
   nodeHandle_.param("publishers/detection_image/latch", detectionImageLatch, true);
 
+  std::cerr << "*** cameraTopicName:\t" << cameraTopicName << std::endl;
+  std::cerr << "*** cameraQueueSize:\t" << cameraQueueSize << std::endl;
+  std::cerr << "*** boundingBoxesTopicName:\t" << boundingBoxesTopicName << std::endl;
+  std::cerr << "*** boundingBoxesQueueSize:\t" << boundingBoxesQueueSize << std::endl;
+  std::cerr << "*** detectionImageTopicName:\t" << detectionImageTopicName << std::endl;
+  std::cerr << "*** detectionImageQueueSize:\t" << detectionImageQueueSize << std::endl;
+  
   imageSubscriber_ = imageTransport_.subscribe(cameraTopicName, cameraQueueSize, &YoloObjectDetector::cameraCallback, this);
   objectPublisher_ =
       nodeHandle_.advertise<darknet_ros_msgs::ObjectCount>(objectDetectorTopicName, objectDetectorQueueSize, objectDetectorLatch);
