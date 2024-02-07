@@ -70,7 +70,8 @@ bool YoloObjectDetector::readParameters() {
 }
 
 void YoloObjectDetector::init() {
-  ROS_INFO("[YoloObjectDetector] init().");
+  ROS_INFO_STREAM("[YoloObjectDetector] init(). namespace="
+		  << nodeHandle_.getNamespace());
 
   // Initialize deep network of darknet.
   std::string weightsPath;
