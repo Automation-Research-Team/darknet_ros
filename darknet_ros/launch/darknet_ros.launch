@@ -3,41 +3,37 @@
 <launch>
   <!-- Console launch prefix -->
   <arg name="launch_prefix"	default=""/>
-
   <arg name="manager"		default=""/>
 
   <!-- Config and weights folder. -->
-  <arg name="yolo_weights_path"	default="$(find darknet_ros
-					 )/yolo_network_config/weights"/>
-  <arg name="yolo_config_path"	default="$(find darknet_ros
-					 )/yolo_network_config/cfg"/>
+  <arg name="yolo_weights_path"	default="$(dirname
+					 )/../yolo_network_config/weights"/>
+  <arg name="yolo_config_path"	default="$(dirname
+					 )/../yolo_network_config/cfg"/>
 
   <!-- ROS and network parameter files -->
-  <arg name="ros_param_file"	 default="$(find darknet_ros
-					  )/config/ros.yaml"/>
-  <arg name="network_param_file" default="$(find darknet_ros
-					  )/config/yolov4.yaml"/>
+  <arg name="ros_param_file"	 default="$(dirname)/../config/ros.yaml"/>
+  <arg name="network_param_file" default="$(dirname)/../config/yolov4.yaml"/>
 
   <!-- Start darknet and ros wrapper -->
-  <arg if="$(eval manager == '')"	name="command"	value="standalone"/>
-  <arg unless="$(eval manager == '')"	name="command"	value="load"/>
-
-  <node name="darknet_ros"
-  	pkg ="nodelet" type="nodelet" output="screen"
-  	args="$(arg command) darknet_ros/darknet_ros_nodelet $(arg manager)">
+  <node if="$(eval manager == '')"
+	name="darknet_ros" pkg="darknet_ros" type="darknet_ros"
+	output="screen" launch-prefix="$(arg launch_prefix)">
     <param name="weights_path"	value="$(arg yolo_weights_path)" />
     <param name="config_path"	value="$(arg yolo_config_path)" />
     <rosparam file="$(arg ros_param_file)"/>
     <rosparam file="$(arg network_param_file)"/>
   </node>
   
-  <!-- <node pkg="darknet_ros" type="darknet_ros" name="darknet_ros" -->
-  <!-- 	output="screen" launch-prefix="$(arg launch_prefix)"> -->
-  <!--   <param name="weights_path"	value="$(arg yolo_weights_path)" /> -->
-  <!--   <param name="config_path"	value="$(arg yolo_config_path)" /> -->
-  <!--   <rosparam file="$(arg ros_param_file)"/> -->
-  <!--   <rosparam file="$(arg network_param_file)"/> -->
-  <!-- </node> -->
-
+  <node unless="$(eval manager == '')"
+	name="darknet_ros" pkg ="nodelet" type="nodelet" output="screen"
+  	args="load darknet_ros/darknet_ros_nodelet $(arg manager)">
+    <param name="weights_path"	value="$(arg yolo_weights_path)" />
+    <param name="config_path"	value="$(arg yolo_config_path)" />
+    <rosparam file="$(arg ros_param_file)"/>
+    <rosparam file="$(arg network_param_file)"/>
+  </node>
+  
  <!--<node name="republish" type="republish" pkg="image_transport" output="screen" 	args="compressed in:=/front_camera/image_raw raw out:=/camera/image_raw" /> -->
+
 </launch>
