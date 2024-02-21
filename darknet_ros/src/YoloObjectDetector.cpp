@@ -237,7 +237,7 @@ bool YoloObjectDetector::publishDetectionImage(const cv::Mat& detectionImage) {
   cv_bridge::CvImage cvImage;
   cvImage.header.stamp = ros::Time::now();
   cvImage.header.frame_id = "detection_image";
-  cvImage.encoding = sensor_msgs::image_encodings::RGB8;
+  cvImage.encoding = sensor_msgs::image_encodings::BGR8;
   cvImage.image = detectionImage;
   detectionImagePublisher_.publish(*cvImage.toImageMsg());
   ROS_DEBUG("Detection image has been published.");
@@ -248,7 +248,7 @@ bool YoloObjectDetector::publishResultImage() {
   if (detectionImagePublisher_.getNumSubscribers() < 1) return false;
   cv_bridge::CvImage cvImage;
   cvImage.header = headerBuff_[(buffIndex_ + 1) % 3];
-  cvImage.encoding = sensor_msgs::image_encodings::RGB8;
+  cvImage.encoding = sensor_msgs::image_encodings::BGR8;
   cvImage.image = image_to_mat(buff_[(buffIndex_ + 1) % 3]);
   detectionImagePublisher_.publish(*cvImage.toImageMsg());
   ROS_DEBUG("Result image has been published.");
@@ -553,8 +553,8 @@ void* YoloObjectDetector::publishInThread() {
 
   // Publish bounding boxes and detection result.
   int num = roiBoxes_[0].num;
-//if (num > 0 && num <= 100) {
-  if (num >= 0 && num <= 100) {
+  if (num > 0 && num <= 100) {
+    //if (num >= 0 && num <= 100) {
     for (int i = 0; i < num; i++) {
       for (int j = 0; j < numClasses_; j++) {
         if (roiBoxes_[i].Class == j) {
